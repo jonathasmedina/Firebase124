@@ -4,39 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
+    tools:context=".Buscar">
 
     <EditText
-        android:id="@+id/editTextNome"
+        android:id="@+id/editTextBuscarNome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="52dp"
-        android:ems="10"
-        android:hint="Insira nome"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="16dp"
+        android:ems="15"
+        android:hint="pesquisar nome"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="64dp"
-        android:ems="10"
-        android:hint="Insira e-mail"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNome" />
-
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/listViewBuscar"
         android:layout_width="395dp"
-        android:layout_height="509dp"
+        android:layout_height="635dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextBuscarNome" />
 </android.support.constraint.ConstraintLayout>

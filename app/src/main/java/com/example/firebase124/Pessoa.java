@@ -31,4 +31,10 @@ public class Pessoa {
     public void setId(String id) {
         this.id = id;
     }
+
+
+    @Override
+    public String toString() {
+        return "Nome: " + nome + ". E-mail: " + email;
+    }
 }
