@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,8 +31,12 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     List<Pessoa> pessoaList = new ArrayList<>();
+    List<DadosLojas> dadosLojasLista = new ArrayList<>();
     ArrayAdapter<Pessoa> pessoaArrayAdapter;
+    ArrayAdapter<DadosLojas> dadosLojasArrayAdapter;
     Pessoa pessoaSelecionada;
+
+    int i;
 
 
     @Override
@@ -45,7 +50,17 @@ public class MainActivity extends AppCompatActivity {
 
         inicializarFirebase();
 
-        eventoDatabase();
+
+        //TODO importante: leia abaixo
+
+        //base de dados (nó User):
+        //https://console.firebase.google.com/u/1/project/fir-124/database/fir-124/data
+
+        //1) trazer todos as lojas de um usuário específico
+       // eventoDatabase();
+
+        //2) trazer todas as lojas (inclusive de usuários diferentes) de uma categoria específica
+        lojasPorCat();
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -61,24 +76,75 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void eventoDatabase() {
-        databaseReference.child("Pessoa").addValueEventListener(new ValueEventListener() {
+    private void lojasPorCat() {
+        final String categoria = "cat2"; //trazer via formulário ou pelo Auth
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("User");
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                pessoaList.clear();
+                for (DataSnapshot objDataSnapshot: dataSnapshot.getChildren()) { //este for itera os usuários
+                    i = 1;
+                    //este for itera os objetos (lojas) dos usuários
+                    for (DataSnapshot objDataSnapshotLojas: objDataSnapshot.getChildren()) {
+                        if (!objDataSnapshotLojas.getKey().equals("nome")){ //p/ não pegar dados do usuário
+                            if (objDataSnapshotLojas.child("cat").getValue().toString().equals(categoria)) { //p/ só trazer de uma categoria específica
+                                DadosLojas dadosLojas = new DadosLojas();
+                                dadosLojas.setBox(objDataSnapshotLojas.child("box").getValue().toString());
+                                dadosLojas.setCategoria(objDataSnapshotLojas.child("cat").getValue().toString());
 
-                for (DataSnapshot objDataSnapshot: dataSnapshot.getChildren()) {
-                    Pessoa p = objDataSnapshot.getValue(Pessoa.class);
-                    pessoaList.add(p);
+                                dadosLojasLista.add(dadosLojas);
+                            }
+                            i++;
+                        }
+                    }
+
                 }
 
-                pessoaArrayAdapter = new ArrayAdapter<>(
-                  MainActivity.this,
-                  android.R.layout.simple_list_item_1,
-                  pessoaList
+                dadosLojasArrayAdapter = new ArrayAdapter<>(
+                        MainActivity.this,
+                        android.R.layout.simple_list_item_1,
+                        dadosLojasLista
                 );
 
-                listView.setAdapter(pessoaArrayAdapter);
+                listView.setAdapter(dadosLojasArrayAdapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void eventoDatabase() {
+        String userId = "87654321"; //trazer via formulário ou pelo Auth
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("User").child(userId);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot objDataSnapshot: dataSnapshot.getChildren()) {
+
+                    if (!objDataSnapshot.getKey().toString().equals("nome")){ //para não pegar nó com atributos do usuário
+                        DadosLojas dadosLojas = new DadosLojas();
+                        dadosLojas.setBox(objDataSnapshot.child("box").getValue().toString());
+                        dadosLojas.setCategoria(objDataSnapshot.child("cat").getValue().toString());
+
+                        dadosLojasLista.add(dadosLojas);
+                    }
+                }
+
+                dadosLojasArrayAdapter = new ArrayAdapter<>(
+                  MainActivity.this,
+                  android.R.layout.simple_list_item_1,
+                        dadosLojasLista
+                );
+
+                listView.setAdapter(dadosLojasArrayAdapter);
 
 
             }
