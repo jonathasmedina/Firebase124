@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot objDataSnapshot: dataSnapshot.getChildren()) { //este for itera os usuários
-                    i = 1;
                     //este for itera os objetos (lojas) dos usuários
                     for (DataSnapshot objDataSnapshotLojas: objDataSnapshot.getChildren()) {
                         if (!objDataSnapshotLojas.getKey().equals("nome")){ //p/ não pegar dados do usuário
@@ -97,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
                             i++;
                         }
                     }
-
                 }
 
                 dadosLojasArrayAdapter = new ArrayAdapter<>(
